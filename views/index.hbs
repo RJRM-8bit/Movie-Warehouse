@@ -10,7 +10,7 @@
     <header>
         <h1>Movie List</h1>
         <nav>
-            <a href="/favorites">View Favorites</a>
+            <a href="/">Home</a> || <a href="/favorites">View Favorites</a>
         </nav>
     </header>
     <main>
@@ -30,33 +30,37 @@
     <footer>
         <p>&copy; 2024 Movie List Application</p>
     </footer>
-
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const favoriteButtons = document.querySelectorAll('.favorite-btn');
-
-        favoriteButtons.forEach((button) => {
-            button.addEventListener('click', (e) => {
-                // Fix: Get the movieId from the li element's data-id attribute
-                const movieId = e.target.closest('li').dataset.id;
-
-                fetch('/favorite', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ movieId })
-                })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.success) {
-                        alert('Movie added to favorites!');
-                    } else {
-                        alert('Error adding movie to favorites.');
-                    }
-                });
-            });
+    document.addEventListener('DOMContentLoaded', function () {
+    // Event listener for the favorite buttons
+    const favoriteButtons = document.querySelectorAll('.favorite-btn');
+    
+    favoriteButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const movieId = this.dataset.movieId; // Get the movie ID from the data attribute
+            
+            fetch('/favorite', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ movieId }) // Send the movie ID in the request body
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Optionally update the UI to show that the movie was added
+                    this.textContent = 'Added to Favorites'; // Change button text
+                    this.disabled = true; // Disable button to prevent re-adding
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
         });
     });
-</script>
+});
 
+</script>
 </body>
 </html>
