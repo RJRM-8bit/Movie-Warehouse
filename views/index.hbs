@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie List</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <h1>Movie List</h1>
+        <nav>
+            <a href="/favorites">View Favorites</a>
+        </nav>
+    </header>
+    <main>
+        <ul>
+            {{#each movies}}
+            <li data-id="{{this.id}}"> <!-- Add data-id here -->
+                <h2>{{this.title}}</h2>
+                <p><strong>Overview:</strong> {{this.overview}}</p>
+                <p><strong>Release Date:</strong> {{this.release_date}}</p>
+                <p><strong>Rating:</strong> {{this.vote_average}} ({{this.vote_count}} votes)</p>
+                <button class="favorite-btn add" data-movie-id="{{this.id}}">Add to Favorites</button>
+            </li>
+            {{/each}}
+        </ul>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Movie List Application</p>
+    </footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const favoriteButtons = document.querySelectorAll('.favorite-btn');
+
+        favoriteButtons.forEach((button) => {
+            button.addEventListener('click', (e) => {
+                // Fix: Get the movieId from the li element's data-id attribute
+                const movieId = e.target.closest('li').dataset.id;
+
+                fetch('/favorite', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ movieId })
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert('Movie added to favorites!');
+                    } else {
+                        alert('Error adding movie to favorites.');
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
