@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', function () {
             const movieId = this.dataset.movieId; // Get the movie ID from the data attribute
             
-            fetch('/add-favorite', {
+            fetch('/favorite', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error:', error));
         });
     });
-    
+
     // Event listeners for navigation
     prevPage.addEventListener('click', () => {
         if (currentPage > 1) {
