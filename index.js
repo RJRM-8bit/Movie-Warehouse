@@ -91,12 +91,16 @@ app.get('/', (req, res) => {
 });
 
 // Handle adding a movie to favorites
-app.post('/add-favorite', (req, res) => {
-    const newFavorite = req.body.favorite;
-    if (newFavorite) {
-      favorites.push(newFavorite); // Add to the array of favorites
+app.post('/favorite', (req, res) => {
+    const { movieId } = req.body;
+    // Find the movie by ID
+    const movie = movies.find((m) => m.id == movieId);
+    if (movie && !favoriteMovies.includes(movie)) {
+        favoriteMovies.push(movie);
+        res.json({ success: true, favorites: favoriteMovies });
+    } else {
+        res.json({ success: false, message: 'Movie not found or already in favorites.' });
     }
-    res.redirect('/'); // Redirect back to the homepage to show updated favorites
 });
 
 // View favorites
