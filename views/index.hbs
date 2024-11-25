@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie List</title>
     <link rel="stylesheet" href="/style.css">
+    
 </head>
 <body>
     <header>
@@ -14,6 +15,7 @@
         </nav>
     </header>
     <main>
+        <script src="/script.js"></script>
         <ul>
             {{#each movies}}
             <li data-id="{{this.id}}"> <!-- Add data-id here -->
@@ -30,6 +32,6 @@
     <footer>
         <p>&copy; 2024 Movie List Application</p>
     </footer>
-<script src="/public/script.js"></script>
+
 </body>
 </html>
