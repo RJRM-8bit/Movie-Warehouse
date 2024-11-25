@@ -23,7 +23,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p><strong>Overview:</strong> ${movie.overview}</p>
                 <p><strong>Release Date:</strong> ${movie.release_date}</p>
                 <p><strong>Rating:</strong> ${movie.vote_average} (${movie.vote_count} votes)</p>
-                <button class="favorite-btn add" data-movie-id="${movie.id}">Add to Favorites</button>
+                <button class="favorite-btn" data-movie-id="${movie.id}">Add to Favorites</button>
+                <button class="watchlist-btn" data-movie-id="${movie.id}">Add to Watch List</button>
             `;
             moviesList.appendChild(li);
         });
@@ -34,9 +35,10 @@ document.addEventListener('DOMContentLoaded', function () {
         nextPage.disabled = data.page === data.totalPages;
     }
 
-    // Event listener for the favorite buttons
+    // Event listener for the favorite & watch list buttons
     const favoriteButtons = document.querySelectorAll('.favorite-btn');
-    
+    const watchListBtns = document.querySelectorAll('.watchlist-btn');
+
     favoriteButtons.forEach(button => {
         button.addEventListener('click', function () {
             const movieId = this.dataset.movieId; // Get the movie ID from the data attribute
@@ -53,6 +55,32 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.success) {
                     // Optionally update the UI to show that the movie was added
                     this.textContent = 'Added to Favorites'; // Change button text
+                    this.disabled = true; // Disable button to prevent re-adding
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Add to Watch List
+    watchListBtns.forEach(button => {
+        button.addEventListener('click', function () {
+            const movieId = this.dataset.movieId; // Get the movie ID from the data attribute
+            
+            fetch('/watchlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ movieId }) // Send the movie ID in the request body
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Optionally update the UI to show that the movie was added
+                    this.textContent = 'Added to Watch List'; // Change button text
                     this.disabled = true; // Disable button to prevent re-adding
                 } else {
                     alert(data.message);

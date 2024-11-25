@@ -49,6 +49,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 // In-memory list for favorite movies
 let favoriteMovies = [];
+let watchlistsMovies = [];
 
 // Serve static files (for CSS, JS, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -103,9 +104,26 @@ app.post('/favorite', (req, res) => {
     }
 });
 
+// Handle adding a movie to watch list
+app.post('/watchlist', (req, res) => {
+    const { movieId } = req.body;
+    // Find the movie by ID
+    const movie = movies.find((m) => m.id == movieId);
+    if (movie && !watchlistsMovies.includes(movie)) {
+        watchlistsMovies.push(movie);
+        res.json({ success: true, watchlist: watchlistsMovies });
+    } else {
+        res.json({ success: false, message: 'Movie not found or already in Watchlist.' });
+    }
+});
+
 // View favorites
 app.get('/favorites', (req, res) => {
     res.render('index', { movies: favoriteMovies });
+});
+
+app.get('/watchlisted', (req, res) => {
+    res.render('index', { movies: watchlistsMovies });
 });
 
 // Additional Pages
