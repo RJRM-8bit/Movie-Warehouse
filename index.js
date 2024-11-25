@@ -132,11 +132,18 @@ app.post('/watchlist', (req, res) => {
         }
         return res.json({ success: false, message: 'Movie already in watchlist.' });
     } else if (action === 'remove') {
-        if (movie && watchlistsMovies.includes(movie)) {
+        if (movie && watchlistsMovies.includes(movie)){
             // Remove movie from the watchlist
             watchlistsMovies = watchlistsMovies.filter(watchlist => watchlist.id !== movieId);
-            // Add movie to the watchedMovies array
-            watchedMovies.push(movie);
+    
+            // Check if the movie is already in the watchedMovies array
+            const isAlreadyWatched = watchedMovies.some(watched => watched.id === movieId);
+    
+            // If the movie is not already in the watchedMovies list, add it
+            if (!isAlreadyWatched) {
+                watchedMovies.push(movie);
+            }
+    
             return res.json({ success: true });
         }
         return res.json({ success: false, message: 'Movie not found in watchlist.' });
