@@ -13,18 +13,24 @@ document.addEventListener('DOMContentLoaded', function () {
         const response = await fetch(`/movies?page=${page}&limit=5&search=${search}`);
         const data = await response.json();
 
-        // Update UI
         moviesList.innerHTML = '';
         data.movies.forEach(movie => {
             const li = document.createElement('li');
             li.setAttribute('data-id', movie.id);
+            const isFavorite = favoriteMovies.some(fav => fav.id === movie.id);
+            const isWatchlist = watchlistsMovies.some(watchlist => watchlist.id === movie.id);
+
             li.innerHTML = `
                 <h2>${movie.title}</h2>
                 <p><strong>Overview:</strong> ${movie.overview}</p>
                 <p><strong>Release Date:</strong> ${movie.release_date}</p>
                 <p><strong>Rating:</strong> ${movie.vote_average} (${movie.vote_count} votes)</p>
-                <button class="favorite-btn" data-movie-id="${movie.id}">Add to Favorites</button>
-                <button class="watchlist-btn" data-movie-id="${movie.id}">Add to Watch List</button>
+                <button class="favorite-btn" data-movie-id="${movie.id}">
+                    ${isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+                </button>
+                <button class="watchlist-btn" data-movie-id="${movie.id}">
+                    ${isWatchlist ? 'Remove from Watch List' : 'Add to Watch List'}
+                </button>
             `;
             moviesList.appendChild(li);
         });
@@ -39,23 +45,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const favoriteButtons = document.querySelectorAll('.favorite-btn');
     const watchListBtns = document.querySelectorAll('.watchlist-btn');
 
-    favoriteButtons.forEach(button => {
+     // Handle favorite button click (Add/Remove)
+     favoriteButtons.forEach(button => {
         button.addEventListener('click', function () {
-            const movieId = this.dataset.movieId; // Get the movie ID from the data attribute
-            
-            fetch('/favorite', {
+            const movieId = this.dataset.movieId;
+            const action = this.textContent.includes('Add') ? 'add' : 'remove';
+            fetch(`/favorite`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ movieId }) // Send the movie ID in the request body
+                body: JSON.stringify({ movieId, action })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Optionally update the UI to show that the movie was added
-                    this.textContent = 'Added to Favorites'; // Change button text
-                    this.disabled = true; // Disable button to prevent re-adding
+                    this.textContent = action === 'add' ? 'Remove from Favorites' : 'Add to Favorites';
+                    fetchAndRenderMovies(currentPage, searchQuery); // Re-render movie list
                 } else {
                     alert(data.message);
                 }
@@ -64,24 +70,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Add to Watch List
+    // Handle watchlist button click (Add/Remove)
     watchListBtns.forEach(button => {
         button.addEventListener('click', function () {
-            const movieId = this.dataset.movieId; // Get the movie ID from the data attribute
-            
-            fetch('/watchlist', {
+            const movieId = this.dataset.movieId;
+            const action = this.textContent.includes('Add') ? 'add' : 'remove';
+            fetch(`/watchlist`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ movieId }) // Send the movie ID in the request body
+                body: JSON.stringify({ movieId, action })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Optionally update the UI to show that the movie was added
-                    this.textContent = 'Added to Watch List'; // Change button text
-                    this.disabled = true; // Disable button to prevent re-adding
+                    this.textContent = action === 'add' ? 'Remove from Watch List' : 'Add to Watch List';
+                    fetchAndRenderMovies(currentPage, searchQuery); // Re-render movie list
                 } else {
                     alert(data.message);
                 }

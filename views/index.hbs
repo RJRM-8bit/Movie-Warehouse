@@ -16,19 +16,30 @@
     </center>
 
     {{!-- Movie List --}}
-    <ul>
-        {{#each movies}}
-            <li data-id="{{id}}">
-                <h2>{{title}}</h2>
-                <p><strong>Overview:</strong> {{overview}}</p>
-                <p><strong>Release Date:</strong> {{release_date}}</p>
-                <p><strong>Rating:</strong> {{vote_average}} ({{vote_count}} votes)</p>
+   <ul>
+    {{#each movies}}
+        <li data-id="{{id}}">
+            <h2>{{title}}</h2>
+            <p><strong>Overview:</strong> {{overview}}</p>
+            <p><strong>Release Date:</strong> {{release_date}}</p>
+            <p><strong>Rating:</strong> {{vote_average}} ({{vote_count}} votes)</p>
+            
+            <!-- Favorite Button: Check if movie is in favorites -->
+            {{#if (isFavorite id)}}
+                <button class="favorite-btn" data-movie-id="{{id}}">Remove from Favorites</button>
+            {{else}}
                 <button class="favorite-btn" data-movie-id="{{id}}">Add to Favorites</button>
-                <button class="watchlist-btn" data-movie-id="{{id}}">Add to Watch List</button>
-            </li>
-        {{/each}}
-    </ul>
+            {{/if}}
 
+            <!-- Watchlist Button: Check if movie is in watchlist -->
+            {{#if (isInWatchlist id)}}
+                <button class="watchlist-btn" data-movie-id="{{id}}">Remove from Watch List</button>
+            {{else}}
+                <button class="watchlist-btn" data-movie-id="{{id}}">Add to Watch List</button>
+            {{/if}}
+        </li>
+    {{/each}}
+    </ul>
     <!-- Pagination -->
     <center>
         <div id="pagination">

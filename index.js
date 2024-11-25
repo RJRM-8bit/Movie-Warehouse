@@ -29,6 +29,12 @@ app.engine('hbs', engine({
         // Custom helper to check if the page is less than total pages (for 'Next' link)
         pageLessThanTotalPages: function (page, totalPages) {
             return page < totalPages; // Returns true if the page is less than totalPages
+        },
+        isFavorite: function(movieId){
+            return favoriteMovies.some(movie => movie.id == movieId);
+        },
+        isInWatchlist: function(movieId){
+            return watchlistsMovies.some(movie => movie.id == movieId);
         }
     }
 }));
@@ -91,30 +97,48 @@ app.get('/', (req, res) => {
     });
 });
 
-// Handle adding a movie to favorites
+// Handle adding or removing a movie to/from favorites
 app.post('/favorite', (req, res) => {
-    const { movieId } = req.body;
-    // Find the movie by ID
+    const { movieId, action } = req.body;
     const movie = movies.find((m) => m.id == movieId);
-    if (movie && !favoriteMovies.includes(movie)) {
-        favoriteMovies.push(movie);
-        res.json({ success: true, favorites: favoriteMovies });
-    } else {
-        res.json({ success: false, message: 'Movie not found or already in favorites.' });
+    
+    if (action === 'add') {
+        if (movie && !favoriteMovies.includes(movie)) {
+            favoriteMovies.push(movie);
+            return res.json({ success: true });
+        }
+        return res.json({ success: false, message: 'Movie already in favorites.' });
+    } else if (action === 'remove') {
+        if (movie && favoriteMovies.includes(movie)) {
+            favoriteMovies = favoriteMovies.filter(fav => fav.id !== movieId);
+            return res.json({ success: true });
+        }
+        return res.json({ success: false, message: 'Movie not found in favorites.' });
     }
+
+    res.json({ success: false, message: 'Invalid action.' });
 });
 
-// Handle adding a movie to watch list
+// Handle adding or removing a movie to/from the watchlist
 app.post('/watchlist', (req, res) => {
-    const { movieId } = req.body;
-    // Find the movie by ID
+    const { movieId, action } = req.body;
     const movie = movies.find((m) => m.id == movieId);
-    if (movie && !watchlistsMovies.includes(movie)) {
-        watchlistsMovies.push(movie);
-        res.json({ success: true, watchlist: watchlistsMovies });
-    } else {
-        res.json({ success: false, message: 'Movie not found or already in Watchlist.' });
+    
+    if (action === 'add') {
+        if (movie && !watchlistsMovies.includes(movie)) {
+            watchlistsMovies.push(movie);
+            return res.json({ success: true });
+        }
+        return res.json({ success: false, message: 'Movie already in watchlist.' });
+    } else if (action === 'remove') {
+        if (movie && watchlistsMovies.includes(movie)) {
+            watchlistsMovies = watchlistsMovies.filter(watchlist => watchlist.id !== movieId);
+            return res.json({ success: true });
+        }
+        return res.json({ success: false, message: 'Movie not found in watchlist.' });
     }
+
+    res.json({ success: false, message: 'Invalid action.' });
 });
 
 // View favorites
