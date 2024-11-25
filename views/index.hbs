@@ -3,35 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie List</title>
-    <link rel="stylesheet" href="/style.css">
-    
+    <title>Movies</title>
 </head>
 <body>
-    <header>
-        <h1>Movie List</h1>
-        <nav>
-            <a href="/">Home</a> || <a href="/favorites">View Favorites</a>
-        </nav>
-    </header>
-    <main>
-        <script src="/script.js"></script>
-        <ul>
-            {{#each movies}}
-            <li data-id="{{this.id}}"> <!-- Add data-id here -->
-                <h2>{{this.title}}</h2>
-                <p><strong>Overview:</strong> {{this.overview}}</p>
-                <p><strong>Release Date:</strong> {{this.release_date}}</p>
-                <p><strong>Rating:</strong> {{this.vote_average}} ({{this.vote_count}} votes)</p>
-                <button class="favorite-btn add" data-movie-id="{{this.id}}">Add to Favorites</button>
+    <center>
+    <h1>Movies</h1>
+    <!-- Search form -->
+    <form action="/movies" method="GET">
+        <input type="text" name="search" placeholder="Search movies..." value="{{search}}" />
+        <button type="submit">Search</button>
+    </form>
+    </center>
+
+    {{!-- Movie List --}}
+    <ul>
+        {{#each movies}}
+            <li data-id="{{id}}">
+                <h2>{{title}}</h2>
+                <p><strong>Overview:</strong> {{overview}}</p>
+                <p><strong>Release Date:</strong> {{release_date}}</p>
+                <p><strong>Rating:</strong> {{vote_average}} ({{vote_count}} votes)</p>
+                <button class="favorite-btn add" data-movie-id="{{id}}">Add to Favorites</button>
             </li>
-            {{/each}}
-        </ul>
-    </main>
+        {{/each}}
+    </ul>
 
-    <footer>
-        <p>&copy; 2024 Movie List Application</p>
-    </footer>
-
+    <!-- Pagination -->
+    <center>
+        <div id="pagination">
+            <span>Page {{page}} of {{totalPages}}</span>
+            <p>
+                {{#if (pageGreaterThanOne page)}}
+                    <a href="/movies?page={{dec page}}&limit={{limit}}&search={{search}}">Previous</a>
+                {{/if}}
+                
+                {{#if (pageLessThanTotalPages page totalPages)}}
+                    <a href="/movies?page={{inc page}}&limit={{limit}}&search={{search}}">Next</a>
+                {{/if}}
+            </p>
+            
+        </div>
+    </center>
 </body>
 </html>
