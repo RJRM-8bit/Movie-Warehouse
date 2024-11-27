@@ -154,7 +154,7 @@ app.post('/watchlist', (req, res) => {
 
 // View favorites
 app.get('/favorites', (req, res) => {
-    res.render('favorites', { movies: favoriteMovies });
+    res.render('index', { movies: favoriteMovies });
 });
 
 app.get('/watchlist', (req, res) => {
