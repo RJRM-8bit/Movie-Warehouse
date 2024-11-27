@@ -154,10 +154,10 @@ app.post('/watchlist', (req, res) => {
 
 // View favorites
 app.get('/favorites', (req, res) => {
-    res.render('index', { movies: favoriteMovies });
+    res.render('favorites', { movies: favoriteMovies });
 });
 
-app.get('/watchlisted', (req, res) => {
+app.get('/watchlist', (req, res) => {
     res.render('index', { movies: watchlistsMovies });
 });
 
